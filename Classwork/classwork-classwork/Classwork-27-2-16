@@ -1,0 +1,1128 @@
+Jeremy Smith
+
+1. 4 differences between abstract classes and interfaces:
+
+	1. Interfaces are implemented, abstract classes are extended
+	2. Any number of interfaces may be implemented
+	3. Concrete class, inherits from abstract class. Concreate "is-a" abstract class.
+	4. Abstract classes have some actual code.
+
+As an example
+
+public interface pay_day {
+    float pay_salary();
+}
+
+public abstract class employee {
+    String name;
+    int ID;
+    void work(){};
+}
+
+public class administrator extends employee implements pay_day {
+
+    static String name;
+    static int ID;
+
+    @Override
+    public float pay_salary(){
+
+        return 1000;
+    }
+
+    public administrator(String name, int ID){
+        this.name=name;
+        this.ID=ID;
+    }
+
+    public static void main(String[] args){
+
+        employee Jeremy = new administrator("Jeremy", 1234);
+
+        System.out.println("name: "+administrator.name);
+    }
+
+}
+
+2a. False
+
+New Interface:
+public interface drink_coffee {
+    String coffee = "Woken-up!";
+}
+
+Add to method qualifiers "drink_coffee":
+public class administrator extends employee implements pay_day, drink_coffee
+
+
+Add to constructor:
+System.out.println(coffee);
+
+b. False
+
+Add to pay_day:
+boolean SomeField = true;
+
+Still compiles and runs
+
+c. False
+
+Add:
+pay_day(){
+        boolean pay = true;
+    }
+
+Compiler says "Interface methods can't have body"
+
+
+3.
+public interface NoResponsibilities {
+
+    int a = 123;
+
+    void doNothing();
+}
+
+public class NothingToDo implements NoResponsibilities {
+
+    @Override
+    public void doNothing(){}
+}
+
+
+
+4. You don't have to implement all of the methods in the interface, you will with the abstract class.
+
+5. Singleton class. A singleton class will only instantiate if an instance variable (which is a pointer to the class) is null, else it returns itself.
+This is because the pointer "instance" is private, the only way to get it is to access the public setter.
+
+6. From the website http://www.oodesign.com/singleton-pattern.html you may use the "lazy-implementation" of the Singleton design method when you only want to instantiate the class when you actually need it.
+This may happen when the singleton class has a large memory overhead during synchronisation in a multi-threaded operation.
+
+(These examples have been copied from website http://www.oodesign.com/singleton-pattern.html)
+
+public class ThreadSafeSingleton {
+    /*
+    In this scenario this static instance is instantiated immediately rather
+    than using the getInstance method
+    */
+    private static ThreadSafeSingleton intance = new ThreadSafeSingleton();
+
+    private ThreadSafeSingleton(){
+
+        System.out.println("ThreadSafeSingleton(): Initializing Instance");
+    }
+    //Only returns the instance already instantiated
+    public static ThreadSafeSingleton getIntance(){
+        return intance;
+    }
+
+    public void doSomething(){
+        System.out.println("doSomething(): ThreadSafeSingleton does something");
+    }
+}
+
+////////////////
+
+public class LazySingleton {
+    //private instance is common to both methods
+    private static LazySingleton instance;
+
+    private LazySingleton(){
+        System.out.println("LazySingleton(): Initializing Instance");
+    }
+    //If instance hasn't been instantiated it does, else returns instance
+    public static LazySingleton getInstance(){
+        if (instance==null){
+            synchronized (LazySingleton.class){
+                if (instance==null){
+                    System.out.println("getInstance(): First time getInstance was invoked!");
+                    instance = new LazySingleton();
+                }
+            }
+        }
+        return instance;
+    }
+    public void doSomething()
+    {
+        System.out.println("doSomething(): LazySingleton does something!");
+    }
+}
+
+7. Example from http://www.tutorialspoint.com/java/util/observable_addobserver.htm
+
+/**
+ * Copied from http://www.tutorialspoint.com/java/util/observable_addobserver.htm
+ * Comments own
+ */
+
+import java.util.Observable;
+import java.util.Observer;
+
+
+class ObservedObject extends Observable{
+    /*watchedValue only accessible from the
+    own class
+     */
+    private String watchedValue;
+    //Constructs object with watchedValue of "value"
+    public ObservedObject(String value){
+        watchedValue=value;
+    }
+    //Setter which only works if different value is passed
+    public void setValue(String value){
+        if(!watchedValue.equals(value)){
+            System.out.println("Value changed to new value: "+value);
+            watchedValue = value;
+
+            /*
+            These Two methods are from java.util.Observable
+            From the Java docs setChanged marks the object as having been changed
+            and hasChanged method of Observed object will return true
+             */
+            setChanged();
+            /*
+            From the Java docs this notifies the observers, then changes the "changed"
+            property to false
+             */
+
+            notifyObservers(value);
+        }
+    }
+}
+
+public class ObservableDemo implements Observer{
+    public static void main(String[] args){
+
+        //Instantiates the observed object
+        ObservedObject watched = new ObservedObject("Original Value");
+        //Instantiates the observer object
+        ObservableDemo watcher = new ObservableDemo();
+        //Updates the watchedValue of Observed object
+        watched.setValue("New Value");
+
+        /* Method of java.util.observable adds another object that can
+        access the Observable methods
+         */
+        watched.addObserver(watcher);
+
+        watched.setValue("Latest Value");
+    }
+    /*This is another method from Observable. The method is called whenever
+    the observed object is updated
+     */
+    public void update(Observable obj, Object arg) {
+        System.out.println("Update called with Arguments: "+arg);
+    }
+}
+
+8. The MVC, or "Model-View-Controller" design pattern works by keeping the view and model separate from each other with a controller.
+One might see obvious connections between the controller as the observer and the model as the observed.
+Standard MVC model (adapted from tutorials spot website):
+
+package MVC;
+
+/**
+ * Created by jeremysmith on 24/01/2016.
+ */
+public class Model {
+    private String name;
+    private String type;
+
+    public void setName(String name){ this.name=name;}
+    public String getName(){ return name;}
+
+    public void setType(String type){ this.type=type;}
+    public String getType(){ return type;}
+
+
+}
+//////////////////////////
+package MVC;
+
+/**
+ * Created by jeremysmith on 24/01/2016.
+ */
+public class View {
+    public void printModel(String name, String type){
+        System.out.println(name);
+        System.out.println(type);
+    }
+}
+//////////////////////////
+package MVC;
+
+/**
+ * Created by jeremysmith on 24/01/2016.
+ */
+public class Controller {
+    private Model model;
+    private View view;
+
+    public Controller(Model model, View view){
+        this.model=model;
+        this.view=view;
+    }
+
+    public void setModelName(String name){model.setName(name);}
+    public String getModelName(){return model.getName();}
+
+    public void setModelType(String type){model.setType(type);}
+    public String getModelType(){return model.getType();}
+
+    public void updateView(){
+        view.printModel(model.getName(), model.getType());
+    }
+}
+////////////////////////////
+package MVC;
+
+/**
+ * Created by jeremysmith on 24/01/2016.
+ */
+public class MVC_Demo {
+    public static void main(String[] args){
+
+        Model model = getModel();
+        View view = new View();
+        Controller controller = new Controller(model, view);
+        controller.updateView();
+
+    }
+
+    private static Model getModel(){
+        Model model = new Model();
+        model.setName("Kate Moss");
+        model.setType("advert");
+        return model;
+    }
+}
+//////////////////////////////
+
+9. Two examples are String and ArrayList.
+
+10. The signed of a factory in place from the point of the client is that you have to access the factory in order to get the objects you want.
+There is an interface responsible for creating the objects that doesn't know how to create the object.
+
+11. You may use the Writer class in the Decorator design method.
+
+package Writer;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public interface Message {
+
+    String writeSomething();
+
+
+}
+///////////////////////////////
+package Writer;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class Messager implements Message{
+
+    @Override
+    public String writeSomething(){
+        String msg = "This is my message before truncation";
+        return msg;
+    }
+
+
+
+}
+/////////////////////////////
+package Writer;
+
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public abstract class MessageDecorator implements Message {
+
+    protected Message decoratedMessage;
+
+
+    public MessageDecorator(Message decoratedMessage){
+
+        this.decoratedMessage=decoratedMessage;
+
+    }
+
+}
+//////////////////////////////
+package Writer;
+
+import java.io.PrintWriter;
+import java.io.Writer;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class MyMessageDecorator extends MessageDecorator {
+
+    MyMessageDecorator(Message decoratedMessage){
+        super(decoratedMessage);
+    }
+
+    @Override
+    public String writeSomething(){
+        String msg = "This is my message before truncation";
+        return msg;
+    }
+	//Writes up to 15 characters of a message to a Writer
+    public Writer MessageWriter(Message decoratedMessage){
+
+        Writer out = new PrintWriter(System.out);
+
+        for(int i=0; i<=15; i++){
+            appendToWriter(out, getChar(decoratedMessage.writeSomething(),i));
+        }
+
+        return out;
+    }
+	//gets the char from a string at an index (for use in the appendToWriter method)
+    private char getChar(String msg, int index){
+
+        char a_char = msg.charAt(index);
+        return a_char;
+    }
+	//Uses the writer.append method to append char to Writer
+    private Writer appendToWriter(Writer writer, char a_char){
+        try {
+            Writer appendedWriter = writer.append(a_char);
+            return appendedWriter;
+        }catch(java.io.IOException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+}
+////////////////////////////////////
+package Writer;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class MyMessageDecoratorDemo {
+
+    public static void main(String[] args){
+
+
+        Message myMessage = new Messager();
+        MyMessageDecorator myDecoratedMessage = new MyMessageDecorator(myMessage);
+
+        System.out.println(myDecoratedMessage.MessageWriter(myMessage));
+    }
+}
+////////////////////////////////////
+
+
+Long form questions
+1.
+package Factory;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public interface Product {
+    //Four basic methods
+    //set total values
+    float setTotalPrice(int count);
+    float setTotalWeight(int count);
+    //get total values
+    float getTotalPrice();
+    float getTotalWeight();
+}
+//////////////////////////////////////
+package Factory;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class ConcreteProduct implements Product {
+    /*
+    Simple implementation this concrete product
+    costs 1.5 times the unit count and weighs 2.5 times
+    the unit count
+     */
+    private int unitCount;
+    private float totalPrice;
+    private float totalWeight;
+    private final float PRICE = 1.5f;
+    private final float WEIGHT = 2.5f;
+
+    //Implementation of implemented methods
+    @Override
+    public float setTotalPrice(int unitCount){
+        totalPrice = unitCount * PRICE;
+        return totalPrice;
+    }
+    @Override
+    public float setTotalWeight(int unitCount){
+        totalWeight = unitCount * WEIGHT;
+        return unitCount * 2.5f;
+    }
+    @Override
+    public float getTotalWeight() {
+        return totalWeight;
+    }
+    @Override
+    public float getTotalPrice() {
+        return totalPrice;
+    }
+
+
+    /*
+    Constructor takes unit count and uses it to
+    calculate the totalprice and totalweight
+    properties using the setter functions
+     */
+    public ConcreteProduct(int unitCount){
+        this.unitCount=unitCount;
+        this.totalPrice=setTotalPrice(this.unitCount);
+        this.totalWeight=setTotalWeight(this.unitCount);
+    }
+
+}
+////////////////////////////////////////////////
+package Factory;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class Creator {
+
+    private Product myConcreteProduct;
+    private int unit_count;
+
+    //Default product is 1 unit of concrete product
+    public Creator(){
+        this.unit_count=1;
+        this.myConcreteProduct=getProduct();
+    }
+
+    //gets a new product based on the number of them
+    public Product getProduct(){
+        Product defaultProduct = new ConcreteProduct(1);
+        return defaultProduct;
+    }
+    //Prints newly constructed object's properties
+    public void printProduct(){
+        System.out.println("Price: "+myConcreteProduct.getTotalPrice());
+        System.out.println("Weight: "+myConcreteProduct.getTotalWeight());
+    }
+}
+//////////////////////////////////////////////
+package Factory;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class ConcreteCreator extends Creator {
+
+    public Product getMyConcreteProduct() {
+        return myConcreteProduct;
+    }
+
+    private Product myConcreteProduct;
+    private int unit_count;
+
+    //Uses the user input unit_count to setup the size of the product
+    public ConcreteCreator(int unit_count){
+        this.unit_count=unit_count;
+        this.myConcreteProduct=getProduct(this.unit_count);
+    }
+    //Allows a larger number of concrete products to be created
+    public Product getProduct(int number){
+        ConcreteProduct aConcreteProduct = new ConcreteProduct(number);
+        return aConcreteProduct;
+    }
+    //Prints newly constructed object's properties
+    public void printProduct(){
+        System.out.println("Price: "+myConcreteProduct.getTotalPrice());
+        System.out.println("Weight: "+myConcreteProduct.getTotalWeight());
+    }
+}
+////////////////////////////////////////////
+package Factory;
+
+/**
+ * Created by jeremysmith on 25/01/2016.
+ */
+public class FactoryDemo {
+    public static void main(String[] args){
+        ConcreteCreator newConcreteCreator = new ConcreteCreator(5);
+        newConcreteCreator.printProduct();
+    }
+}
+///////////////////////////////////////////
+2. Singleton
+a. We could use the synchronised key word on the getInstance method in the lazy implementation you could stop any other thread from using that method at the same time.
+
+b. The use on synchronisation like in a. effects the performance of the operations as the system has to lock and unlock the method.
+
+c. (This question is unclear )No, you will need to use the getInstance method with synchronisation if you want thread-safe instantiation of the Singleton.
+
+di. Taken from: http://www.oodesign.com/singleton-pattern.html
+Here is an example of double-locked Singleton:
+
+public class DoubleLockedLazySingleton {
+
+    private static DoubleLockedLazySingleton instance;
+
+    public static DoubleLockedLazySingleton getInstance(){
+        if (instance==null){
+            synchronized (DoubleLockedLazySingleton.class){
+                if(instance==null){
+                    instance=new DoubleLockedLazySingleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+ii. The listed techniques are possible ways to defeat the objective of a "single" Singleton class.
+A possible implementation which can guard against these techniques is shown below.
+
+import java.io.Serializable;
+
+/**
+ * Created by jeremysmith on 26/01/2016.
+ */
+public class SingletonProtected implements Serializable, Cloneable {
+
+    private static SingletonProtected instance = new SingletonProtected();
+
+    private static synchronized SingletonProtected getInstance(){
+        if(instance==null){
+            instance=new SingletonProtected();
+        }
+        return instance;
+    }
+    //get instance via readresolve means that serialized Singletons are got via a single function
+    protected Object readResolve(){
+        return getInstance();
+    }
+
+    //if cloneable must be implemented this will override the clone function of the SingletonProtected class
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        throw new CloneNotSupportedException();
+    }
+}
+
+3. Adapter
+package xpay;
+
+/**
+ * Created by jeremysmith on 26/01/2016.
+ */
+public interface Xpay {
+    String getCreditCardNo();
+    void setCreditCardNo(String creditCardNo);
+    String getCustomerName();
+    void setCustomerName(String customerName);
+    String getCardExpMonth();
+    void setCardExpMonth(String cardExpMonth);
+    String getCardExpYear();
+    void setCardExpYear(String cardExpYear);
+    Short getCardCVVNo();
+    void setCardCVVNo(Short cardCVVNo);
+    Double getAmount();
+    void setAmount(Double amount);
+}
+////////////////////////////////////////
+package xpay;
+
+/**
+ * Created by jeremysmith on 26/01/2016.
+ */
+public class XpayImpl implements Xpay {
+
+    private String CreditCardNo;
+    private String CustomerName;
+    private String CardExpMonth;
+    private String CardExpYear;
+    private Short CardCVVNo;
+    private Double Amount;
+
+    @Override
+    public String getCreditCardNo() {
+        return CreditCardNo;
+    }
+
+    @Override
+    public void setCreditCardNo(String creditCardNo) {
+        CreditCardNo = creditCardNo;
+    }
+
+
+    @Override
+    public String getCustomerName() {
+        return CustomerName;
+    }
+
+    @Override
+    public void setCustomerName(String customerName) {
+        CustomerName = customerName;
+    }
+
+
+    @Override
+    public String getCardExpMonth() {
+        return CardExpMonth;
+    }
+
+    @Override
+    public void setCardExpMonth(String cardExpMonth) {
+        CardExpMonth = cardExpMonth;
+    }
+
+
+    @Override
+    public String getCardExpYear() {
+        return CardExpYear;
+    }
+
+    @Override
+    public void setCardExpYear(String cardExpYear) {
+        CardExpYear = cardExpYear;
+    }
+
+
+    @Override
+    public Short getCardCVVNo() {
+        return CardCVVNo;
+    }
+
+    @Override
+    public void setCardCVVNo(Short cardCVVNo) {
+        CardCVVNo = cardCVVNo;
+    }
+
+
+    @Override
+    public Double getAmount() {
+        return Amount;
+    }
+
+    public void setAmount(Double amount) {
+        Amount = amount;
+    }
+}
+/////////////////////////////////////////
+package xpay;
+
+/**
+ * Created by jeremysmith on 26/01/2016.
+ */
+public interface PayD {
+    String getCustCardNo();
+    void setCustCardNo(String custCardNo);
+    String getCardOwnerName();
+    void setCardOwnerName(String cardOwnerName);
+    String getCardExpMonthDate();
+    void setCardExpMonthDate(String cardExpMonthDate);
+    Integer getCVVNo();
+    void setCVVNo(Integer cVVNo);
+    Double getTotalAmount();
+    void setTotalAmount(Double totalAmount);
+}
+//////////////////////////////////////////
+package xpay;
+
+/**
+ * Created by jeremysmith on 26/01/2016.
+ */
+public class XpayPayDAdaptor implements PayD{
+
+    private Xpay ccard = new XpayImpl();
+
+    @Override
+    public String getCustCardNo(){
+       return ccard.getCreditCardNo();
+    }
+
+    @Override
+    public void setCustCardNo(String custCardNo){
+        ccard.setCreditCardNo(custCardNo);
+    }
+
+    @Override
+    public String getCardOwnerName(){
+        return ccard.getCustomerName();
+    }
+
+    @Override
+    public void setCardOwnerName(String cardOwnerName){
+        ccard.setCustomerName(cardOwnerName);
+    }
+
+    @Override
+    public String getCardExpMonthDate(){
+        String cardNumber=ccard.getCreditCardNo();
+        return ccard.getCardExpMonth();
+    }
+
+    @Override
+    public void setCardExpMonthDate(String cardExpMonthDate){
+        ccard.setCardExpMonth(cardExpMonthDate);
+    }
+
+    @Override
+    public Integer getCVVNo(){
+        /*CVVNo are small enough for a short conversion
+        to not be a problem, they are 3 digits
+         */
+        Short shortCVVno = ccard.getCardCVVNo();
+        Integer integerCVVNo = new Integer(shortCVVno);
+        return integerCVVNo;
+    }
+
+    @Override
+    public void setCVVNo(Integer cVVNo){
+        /*CVVNo are small enough for a short conversion
+        to not be a problem, they are 3 digits
+         */
+        Short shortCVVNo = cVVNo.shortValue();
+        ccard.setCardCVVNo(shortCVVNo);
+    }
+
+    @Override
+    public Double getTotalAmount(){
+        return ccard.getAmount();
+    }
+
+    @Override
+    public void setTotalAmount(Double totalAmount){
+        ccard.setAmount(totalAmount);
+    }
+}
+////////////////////////////////////////////
+4.
+package Observer;
+
+import javax.management.Descriptor;
+import java.util.ArrayList;
+import java.util.Observable;
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class CommentaryObject extends Observable implements Subject {
+
+    private Descriptor details;
+
+    public void subscribeObserver(Observer observer){
+        setChanged();
+        notifyObservers(observer);
+    }
+    public void unSubscribeObserver(Observer observer){
+        setChanged();
+        notifyObservers(observer);
+    }
+    public void notifyObservers(){
+        setChanged();
+    }
+    //Changed to String[] to allow return of Descriptor.getFieldNames()
+    public String[] subjectDetails(){
+        return details.getFieldNames();
+    }
+
+    public CommentaryObject(ArrayList observerArray, String detail) {
+
+        this.details.setField(detail,observerArray);
+
+    }
+
+
+    }
+/////////////////////////////////////////
+package Observer;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class SMSUsers implements Observer{
+
+    private Subject subject;
+    private String tag;
+
+    public SMSUsers(Subject subject, String tag){
+        this.subject=subject;
+        this.tag=tag;
+    }
+    @Override
+    public void update(String desc){
+
+    }
+    @Override
+    public void subscribe(){
+
+    }
+    @Override
+    public void unSubscribe(){
+
+    }
+}
+//////////////////////////////////////////
+5. Decorator
+
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class Ham extends PizzaDecorator {
+
+    public Ham(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Ham";
+    }
+    public double getPrice(){
+        return 2.5;
+    }
+
+}
+/////////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class Cheese extends PizzaDecorator {
+
+    public Cheese(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Cheese";
+    }
+    public double getPrice(){
+        return 0.5;
+    }
+
+}
+///////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 28/01/2016.
+ */
+public class Mushroom extends PizzaDecorator {
+
+    public Mushroom(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Mushroom";
+    }
+    public double getPrice(){
+        return 2.0;
+    }
+
+}
+/////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 28/01/2016.
+ */
+public class Pepperoni extends PizzaDecorator {
+
+    public Pepperoni(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Pepperoni";
+    }
+    public double getPrice(){
+        return 2.5;
+    }
+}
+///////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class Chicken extends PizzaDecorator{
+
+    public Chicken(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Chicken";
+    }
+    public double getPrice(){
+        return 3.0;
+    }
+
+}
+////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class FetaCheese extends PizzaDecorator{
+    public FetaCheese(Pizza decoratedPizza){
+        super(decoratedPizza);
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "FetaCheese";
+    }
+    public double getPrice(){
+        return 1.5;
+    }
+}
+//////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class SimplyVegPizza implements Pizza {
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "Veggie";
+    }
+    public double getPrice(){
+        return 10.0;
+    }
+}
+//////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public class SimplyNonVegPizza implements Pizza {
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return "No Veg";
+    }
+    public double getPrice(){
+        return 12.5;
+    }
+
+}
+////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public interface Pizza {
+    String getDesc();
+    double getPrice();
+}
+////////////////////////////////////
+package decorator;
+
+/**
+ * Created by jeremysmith on 27/01/2016.
+ */
+public abstract class PizzaDecorator implements Pizza{
+
+    protected Pizza decoratedPizza;
+
+    public PizzaDecorator(Pizza decoratedPizza){
+        this.decoratedPizza=decoratedPizza;
+    }
+
+    private String Desc;
+    private double Price;
+
+    public String getDesc(){
+        return Desc;
+    }
+    public double getPrice(){
+        return Price;
+    }
+
+}
+//////////////////////////////////
+package decorator;
+
+import java.text.DecimalFormat;
+
+/**
+ * Created by jeremysmith on 28/01/2016.
+ */
+public class TestDecoratorPattern {
+    private static DecimalFormat dformat;
+
+    static {
+        dformat=new DecimalFormat("#.##");
+    }
+
+    public static void main(String[] args){
+        Pizza pizza = new SimplyVegPizza();
+        pizza = new Cheese(pizza);
+        print(pizza);
+
+        pizza = new FetaCheese(pizza);
+        print(pizza);
+
+        pizza = new Mushroom(pizza);
+        print(pizza);
+
+        Pizza pizza2 = new SimplyNonVegPizza();
+        pizza2 = new Pepperoni(pizza2);
+        print(pizza2);
+
+        pizza2 = new Ham(pizza2);
+        print(pizza2);
+
+        pizza2 = new Chicken(pizza2);
+        print(pizza2);
+
+    }
+
+    private static void print(Pizza pizza){
+        System.out.println("------------------");
+        System.out.println("Pizza Desc: " + pizza.getDesc());
+        System.out.println("Price: "+ dformat.format(pizza.getPrice()));
+        System.out.println("------------------\n");
+    }
+
+
+}
