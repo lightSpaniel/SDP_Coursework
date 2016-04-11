@@ -1,0 +1,497 @@
+Jeremy Smith.
+
+1a. The Strategy design pattern is a way of getting classes to exhibit behaviour dynamically without unnecessarily duplicating code, or revealing code, decoupling from the using classes.
+In the Strategy design pattern the behaviour interface is implemented by abstract classes, one for each behaviour. The concrete super class then has the interface as a class variable.
+The concrete super class also has a getter method for the type of behaviour to be exhibited.
+On instantiation the sub classes can then select the type of behaviour to be exhibited.
+
+b. The Strategy design pattern may be used when you want to dynamically change behaviour at run time without the use of lots of conditional cases.
+
+2.
+package Strategy;
+
+public interface TextFormatter {
+    String format(String text);
+}
+////////////////////
+package Strategy;
+
+public class LowerTextFormatter implements TextFormatter{
+
+    public String format(String text){
+        return "[" + this.getClass().getSimpleName() + "]" + " : " + text.toLowerCase();
+    }
+}
+///////////////////
+package Strategy;
+
+
+public class CapTextFormatter implements TextFormatter {
+
+    public String format(String text){
+
+        return "[" + this.getClass().getSimpleName() + "]" + " : " + text.toUpperCase();
+    }
+}
+////////////////////
+package Strategy;
+
+public class TextEditor {
+
+    private TextFormatter textFormatter;
+    private String text;
+
+    public TextEditor(TextFormatter textFormatter){
+
+        this.textFormatter=textFormatter;
+    }
+
+    public void publishText(String text){
+
+        String printText = textFormatter.format(text);
+        System.out.println(printText);
+    }
+}
+/////////////////////
+package Strategy;
+
+public class TestStrategyPattern {
+    public static void main(String[] args){
+        TextFormatter formatter = new CapTextFormatter();
+        TextEditor editor = new TextEditor(formatter);
+        editor.publishText("Testing text in caps formatter");
+
+        formatter = new LowerTextFormatter();
+        editor = new TextEditor(formatter);
+        editor.publishText("Testing text in lower formatter");
+    }
+}
+
+3. When the creation of objects needs to be independant of interacting classes.
+Classes using the abstract factory method can be changed without needing to change anything else.
+
+5.
+package Builder;
+
+
+public class Car {
+
+    private String bodyStyle;
+    private String power;
+    private String engine;
+    private String breaks;
+    private String seats;
+    private String windows;
+    private String fuelType;
+    private String carType;
+
+    public Car(String carType) {
+        this.carType = carType;
+    }
+
+    public String getBodyStyle() {
+        return bodyStyle;
+    }
+    public void setBodyStyle(String bodyStyle) {
+        this.bodyStyle = bodyStyle;
+    }
+    public String getPower() {
+        return power;
+    }
+    public void setPower(String power) {
+        this.power = power;
+    }
+    public String getEngine() {
+        return engine;
+    }
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
+    public String getBreaks() {
+        return breaks;
+    }
+    public void setBreaks(String breaks) {
+        this.breaks = breaks;
+    }
+    public String getSeats() {
+        return seats;
+    }
+    public void setSeats(String seats) {
+        this.seats = seats;
+    }
+    public String getWindows() {
+        return windows;
+    }
+    public void setWindows(String windows) {
+        this.windows = windows;
+    }
+    public String getFuelType() {
+        return fuelType;
+    }
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("--------------" + carType + "--------------------- \n");
+        sb.append(" Body: ");
+        sb.append(bodyStyle);
+        sb.append("\n Power: ");
+        sb.append(power);
+        sb.append("\n Engine: ");
+        sb.append(engine);
+        sb.append("\n Breaks: ");
+        sb.append(breaks);
+        sb.append("\n Seats: ");
+        sb.append(seats);
+        sb.append("\n Windows: ");
+        sb.append(windows);
+        sb.append("\n Fuel Type: ");
+        sb.append(fuelType);
+        return sb.toString();
+    }
+
+}
+///////////////////////////////////////////
+package Builder;
+
+public interface CarBuilder {
+
+    Car getCar();
+}
+//////////////////////////////////////////
+package Builder;
+
+public class CarDirector {
+
+    private CarBuilder carBuilder;
+	//Sets carbuilder type
+    public CarDirector(CarBuilder carBuilder){
+        this.carBuilder=carBuilder;
+    }
+	//Starts generic constructor name, which build each type of car
+    public void build(){
+        carBuilder.getCar();
+    }
+}
+///////////////////////////////////////////
+package Builder;
+
+public class SportsCarBuilder  implements CarBuilder{
+
+
+    private Car sportsCar;
+
+		//Builds then returns instance of Car
+        public Car getCar(){
+            Car sportsCar = new Car("SPORTS");
+            this.sportsCar = sportsCar;
+
+            sportsCar.setBodyStyle("External dimensions: overall length (inches): 192.3,\n" +
+                    "overall width (inches): 75.5, overall height (inches): 54.2,\n" +
+                    "wheelbase (inches): 112.3, front track (inches): 63.7,\n" +
+                    "rear track (inches): 64.1 and curb to curb turning circle (feet): 37.7");
+            sportsCar.setBreaks("Four-wheel disc brakes: two ventilated. Electronic brake distribution.");
+            sportsCar.setEngine("3.6L V 6 DOHC and variable valve timing");
+            sportsCar.setFuelType("Petrol 17 MPG city, 28 MPG highway, 20 MPG combined and 380 mi. range");
+            sportsCar.setPower("323 hp @ 6,800 rpm; 278 ft lb of torque @ 4,800 rpm");
+            sportsCar.setSeats("Driver sports front seat with one power adjustments manual height,\n" +
+                    "front passenger seat sports front seat with one power adjustments");
+            sportsCar.setWindows("Front windows with one-touch on two windows");
+
+            return this.sportsCar;
+        }
+}
+///////////////////////////////////////////
+package Builder;
+
+
+public class SedanCarBuilder implements CarBuilder{
+
+
+    private Car sedanCar;
+
+	//Builds then returns instance of car
+    public Car getCar(){
+        Car sedanCar = new Car("SEDAN");
+        this.sedanCar = sedanCar;
+
+        sedanCar.setBodyStyle("External dimensions: overall length (inches): 202.9,\n" +
+                "overall width (inches): 76.2, overall height (inches): 60.7,\n" +
+                "wheelbase (inches): 112.9, front track (inches): 65.3,\n" +
+                "rear track (inches): 65.5 and curb to curb turning circle (feet): 39.5");
+
+        sedanCar.setBreaks("Four-wheel disc brakes: two ventilated. Electronic brake distribution");
+        sedanCar.setEngine("3.5L Duramax V 6 DOHC");
+        sedanCar.setFuelType("Diesel 19 MPG city, 29 MPG highway, 23 MPG combined and 437 mi. range");
+        sedanCar.setPower(" 285 hp @ 6,500 rpm; 253 ft lb of torque @ 4,000 rpm");
+        sedanCar.setSeats("Front seat centre armrest.Rear seat centre armrest.Split-folding rear seats");
+        sedanCar.setWindows("Laminated side windows.Fixed rear window with defroster");
+
+        return this.sedanCar;
+    }
+
+}
+//////////////////////////////////////////
+package Builder;
+
+
+public class TestBuilderPattern {
+
+    public static void main(String[] args) {
+        CarBuilder carBuilder = new SedanCarBuilder();
+        CarDirector director = new CarDirector(carBuilder);
+        director.build();
+        Car car = carBuilder.getCar();
+        System.out.println(car);
+        carBuilder = new SportsCarBuilder();
+        director = new CarDirector(carBuilder);
+        director.build();
+        car = carBuilder.getCar();
+        System.out.println(car);
+    }
+
+}
+
+
+7a. The Facade pattern works as a simplified single access point for a variety of different classes.
+If a system had many classes which did a variety of jobs the client could access all of them via the
+facade class.
+b. The facade pattern would be used if the variety of clases hidden from the client.
+
+8.
+package Facade;
+
+
+public interface ScheduleServer {
+
+    void startBooting();
+    void readSystemConfigFile();
+    void init();
+    void initializeContext();
+    void initializeListeners();
+    void createSystemObjects();
+    void releaseProcesses();
+    void destory();
+    void destroySystemObjects();
+    void destoryListeners();
+    void destoryContext();
+    void shutdown();
+}
+/////////////////////////////
+package Facade;
+
+//Sparse implementation
+public class ServerStartFacade {
+
+    StartServer server;
+
+    public void startServer(){
+
+        StartServer server = new StartServer();
+        this.server=server;
+
+        server.startBooting();
+        server.readSystemConfigFile();
+        server.init();
+        server.initializeContext();
+        server.initializeListeners();
+        server.destoryListeners();
+        server.createSystemObjects();
+        System.out.println("Start working......");
+        System.out.println("After work done.......");
+    }
+
+    public void stopServer(){
+
+        server.releaseProcesses();
+        server.destory();
+        server.destroySystemObjects();
+        server.destoryListeners();
+        server.destoryContext();
+        server.shutdown();
+
+    }
+}
+
+/////////////////////////////
+package Facade;
+//The actual processes running
+public class StartServer implements ScheduleServer{
+
+    public void startBooting(){}
+    public void readSystemConfigFile(){}
+    public void init(){}
+    public void initializeContext(){}
+    public void initializeListeners(){}
+    public void createSystemObjects(){}
+    public void releaseProcesses(){}
+    public void destory(){}
+    public void destroySystemObjects(){}
+    public void destoryListeners(){}
+    public void destoryContext(){}
+    public void shutdown(){}
+}
+
+/////////////////////////////
+package Facade;
+
+public class TestFacade {
+
+    public static void main(String args[]){
+
+        ServerStartFacade facade = new ServerStartFacade();
+        //This is all the client needs to start and stop a server instance
+        facade.startServer();
+        facade.stopServer();
+    }
+}
+/////////////////////////////
+
+9.
+The Bridge design pattern is used to separate out different abstractions. This allows them to change independently.
+
+10.
+package Bridge;
+
+
+public class BigWheel implements Car{
+
+    private Product product;
+    private String carDescription;
+
+    public BigWheel(Product product, String carDescription){
+        this.carDescription=carDescription;
+        this.product=product;
+    }
+
+    public String produceProduct(){
+        return "Producing " + product.getProductDescription()+"\n"+
+                "Modifying product " + product.getProductDescription() + " according to " + carDescription;
+    }
+
+    public String assemble(){
+        return "Assembling " + product.getProductDescription() + " for " + carDescription;
+    }
+    public void printDetails(){
+        System.out.println(produceProduct());
+        System.out.println(assemble());
+        System.out.println("Car: "+carDescription + ", Product:"+product.getProductDescription()+"\n");
+    }
+
+}
+////////////////////////////////////////////
+package Bridge;
+
+
+public class Motoren implements Car{
+
+    private Product product;
+    private String carDescription;
+
+    public Motoren(Product product, String carDescription){
+        this.carDescription=carDescription;
+        this.product=product;
+    }
+
+    public String produceProduct(){
+        return "Producing " + product.getProductDescription()+"\n"+
+                "Modifying product " + product.getProductDescription() + " according to " + carDescription;
+    }
+
+    public String assemble(){
+        return "Assembling " + product.getProductDescription() + " for " + carDescription;
+    }
+    public void printDetails(){
+        System.out.println(produceProduct());
+        System.out.println(assemble());
+        System.out.println("Car: "+carDescription + ", Product:"+product.getProductDescription()+"\n");
+    }
+}
+///////////////////////////////////////
+package Bridge;
+
+
+public interface Car {
+
+    String produceProduct();
+    String assemble();
+    void printDetails();
+
+
+}
+///////////////////////////////////////
+package Bridge;
+
+
+public class CentralLocking implements Product{
+
+    private String description;
+
+    public CentralLocking(String description){
+        this.description=description;
+    }
+
+    public String getProductDescription(){
+        return this.description;
+    }
+
+}
+////////////////////////////////////
+package Bridge;
+
+
+public class CentralLocking implements Product{
+
+    private String description;
+
+    public CentralLocking(String description){
+        this.description=description;
+    }
+
+    public String getProductDescription(){
+        return this.description;
+    }
+
+}
+/////////////////////////////////////
+package Bridge;
+
+
+public interface Product {
+
+    String getProductDescription();
+
+}
+//////////////////////////////////
+package Bridge;
+
+public class TestBridgePattern {
+
+    public static void main(String args[]){
+        Product product = new CentralLocking("Central Locking System");
+        Product product2 = new GearLocking("Gear Locking System");
+        Car car = new BigWheel(product, "BigWheel xz model");
+        car.produceProduct();
+        car.assemble();
+        car.printDetails();
+        System.out.println();
+        car = new BigWheel(product2, "BigWheel xz model");
+        car.produceProduct();
+        car.assemble();
+        car.printDetails();
+        car = new Motoren(product, "Motoren lm model");
+        car.produceProduct();
+        car.assemble();
+        car.printDetails();
+        System.out.println();
+        car = new Motoren(product2, "Motoren lm model");
+        car.produceProduct();
+        car.assemble();
+        car.printDetails();
+
+    }
+
+}
