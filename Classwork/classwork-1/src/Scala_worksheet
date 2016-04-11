@@ -1,0 +1,329 @@
+Jeremy Smith
+
+scala> val num = 17
+scala> num=20
+<console>:11: error: reassignment to val
+       num=20
+scala> val str="ABC1234"
+str: String = ABC1234
+
+scala> var str="ABC1234"
+str: String = ABC1234
+
+scala> print(str)
+ABC1234
+
+scala> str="DEF1234"
+str: String = DEF1234
+
+scala> val double=15.56
+double: Double = 15.56
+
+scala> print(double)
+15.56
+
+
+val sky="sunny"
+val temperature =85.0
+if(sky=="sunny" && temperature>80){true}else{false}
+
+if((sky=="sunny"||sky=="partly cloudy")&&temp>80){
+  true
+}else{
+  false
+}
+
+if((sky=="sunny"||sky=="partly cloudy")&&
+  (temp>80||temp<20)){
+  true
+}else{
+  false
+}
+
+val fahrenheit= -40.0
+
+val celsius= (fahrenheit-32)*(5.0/9.0)
+
+val convertedToFahrenheit=(celsius*9.0/5.0)+32
+
+def getSquare(num: Int): Double ={
+
+}
+
+Methods
+1.
+def getSquare(num: Int): Double ={
+
+  math.sqrt(num*1.0)
+
+}
+val a = getSquare(3)
+assert(a==math.sqrt(3.0))
+
+val b = getSquare(6)
+assert(b==math.sqrt(6.0))
+
+val c = getSquare(5)
+assert(c==math.sqrt(5.0))
+
+
+2.
+def isArg1GreaterThanArg2 (arg1:Double, arg2:Double): Boolean={
+  if(arg1>arg2){true}else{false}
+}
+val t1 = isArg1GreaterThanArg2(4.1, 4.12)
+assert(t1==false)
+val t2 = isArg1GreaterThanArg2(2.1, 1.2)
+assert(t2==true)
+
+3.
+def manyTimesString(str:String, times:Int): String ={
+
+  if(times==1){return str}
+  else{ return manyTimesString(str, times-1) + str}
+
+}
+
+val m1 = manyTimesString("abc", 3)
+assert("abcabcabc" == m1, "Pass")
+
+val m2 = manyTimesString("123", 2)
+assert("123123" == m2, "Pass")
+
+
+Classes & Objects
+1.
+val step = 1 to 10
+println(step)
+
+val step2 = 1 to 2
+println(step2)
+
+2.
+
+var s1 = "Sally"
+var s2 = "Sally"
+
+if (s1.equals(s2)){
+  println("s1 and s2 are equal")}
+else{
+  print("s1 and s2 are not equal")
+}
+
+Creating Classes
+1.
+class Hippo
+class Lion
+class Tiger
+class Monkey
+class Giraffe
+
+val harry = new Hippo()
+val larry = new Lion()
+val terry = new Tiger()
+val micky = new Monkey()
+val gerry = new Giraffe()
+
+Result:
+defined class Hippo
+defined class Lion
+defined class Tiger
+defined class Monkey
+defined class Giraffe
+
+harry: Hippo = Hippo@6ed86d64
+larry: Lion = Lion@6faa515c
+terry: Tiger = Tiger@395c0ef
+micky: Monkey = Monkey@b422d7d
+gerry: Giraffe = Giraffe@75e753a4
+
+val lionel = new Lion()
+val gordon = new Giraffe()
+val gabriel = new Giraffe()
+
+lionel: Lion = Lion@631e9574
+gordon: Giraffe = Giraffe@68b35858
+gabriel: Giraffe = Giraffe@67188216
+
+Strings are different for different objects of the same type
+
+Methods Inside classes
+1.
+class Sailboat{
+  def raise():String = {
+    "Sails raised"
+  }
+
+  def lower():String = {
+    "Sails lowered"
+  }
+}
+
+class Motorboat{
+  def on():String = {
+    "Motor on"
+  }
+
+  def off():String = {
+    "Motor off"
+  }
+}
+
+val sailboat = new Sailboat
+val r1 = sailboat.raise()
+assert(r1 == "Sails raised", "Expected Sails raised, Got " + r1)
+val r2 = sailboat.lower()
+assert(r2 == "Sails lowered", "Expected Sails lowered, Got " + r2)
+val motorboat = new Motorboat
+val s1 = motorboat.on()
+assert(s1 == "Motor on", "Expected Motor on, Got " + s1)
+val s2 = motorboat.off()
+assert(s2 == "Motor off", "Expected Motor off, Got " + s2)
+
+3.
+class Flare{
+
+  def light():String ={
+    "Flare used!"
+  }
+}
+
+val flare = new Flare
+val f1 = flare.light
+assert(f1 == "Flare used!", "Expected Flare used!, Got " + f1)
+
+
+class Sailboat2{
+  def raise():String = {
+    "Sails raised"
+  }
+
+  def lower():String = {
+    "Sails lowered"
+  }
+
+  def signal():String={
+    val emergency = new Flare
+    emergency.light()
+  }
+}
+
+class Motorboat2{
+  def on():String = {
+    "Motor on"
+  }
+
+  def off():String = {
+    "Motor off"
+  }
+
+  def signal():String={
+    val emergency = new Flare
+    emergency.light()
+  }
+}
+
+val sailboat2 = new Sailboat2
+val signal = sailboat2.signal()
+assert(signal == "Flare used!", "Expected Flare used! Got " + signal)
+
+val motorboat2 = new Motorboat2
+val flare2 = motorboat2.signal()
+assert(flare2 == "Flare used!", "Expected Flare used!, Got " + flare2)
+
+Fields in classes
+1.
+class Cup{
+  var percentFull = 0
+  val max = 100
+
+  def add(increase:Int):Int={
+    percentFull += increase
+    if(percentFull > max){
+      percentFull=max
+    }else if(percentFull < 0){
+      percentFull=0
+    }
+    percentFull
+  }
+}
+
+val cup = new Cup
+cup.add(45)
+cup.add(-15)
+cup.add(-50)
+
+//////////////
+2,3,4
+
+//import com.atomicscala.AtomicTest._
+
+class Cup{
+  private var percentFull = 0
+  private val max = 100
+
+  def add(increase:Int):Int={
+    percentFull += increase
+    if(percentFull > max){
+      percentFull=max
+    }else if(percentFull < 0){
+      percentFull=0
+    }
+    percentFull
+  }
+
+  def getPercentFull(): Int ={
+    percentFull
+  }
+
+  def setPercentFull(percentage:Int): Unit={
+    this.percentFull=percentage
+  }
+
+}
+
+val cup = new Cup
+cup.add(45)
+cup.add(-15)
+cup.add(-50)
+cup.add(10)
+cup.add(-9)
+cup.add(-2)
+
+//cup.percentFull = 56 //error
+
+cup.setPercentFull(56)
+cup.getPercentFull()
+
+Vectors
+
+1.
+val v1 = Vector(1,5,7,9,12)
+val v2 = Vector("hello", "my", "name", "is", "jeremy")
+val v3 = Vector(0.1,0.2,0,3,0,4,0.5)
+val v4 = Vector(45l, 67l, 99l, 9999l)
+val v5 = Vector(7.6f, 99f, 9.0f)
+
+2.
+val v6 = Vector(v1,v2,v3,v4,v5)
+
+3.
+val v7 = Vector("The","dog","visited","the","fire","station")
+var sentence = ""
+for(word <- v7){println(word); sentence+=word.concat(" ")}
+
+sentence.toString()
+
+4.
+val myIntVector = Vector(1,2,3,4,5)
+val myDoubleVector = Vector(1.1,2.2,3.3,4.4,5.5)
+
+val sum1 = myIntVector.sum
+val sum2 = myDoubleVector.sum
+val min1 = myIntVector.min
+val min2 = myDoubleVector.min
+val max1 = myIntVector.max
+val max2 = myDoubleVector.max
+
+
+
